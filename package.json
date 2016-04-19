@@ -1,0 +1,6 @@
+{
+  "devDependencies": {
+    "q": "^1.4.1",
+    "request": "^2.71.0"
+  }
+}
