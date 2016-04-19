@@ -18,7 +18,11 @@ function PostCode(srcString) {
 		}
 	}, function(err, httpResponse, body) {
 		response = JSON.parse(body);
-		deferred.resolve(response.trans_result.data[0].dst);
+		if (response.error)
+			deferred.reject(err)
+
+		else
+			deferred.resolve(response.trans_result.data[0].dst);
 	}, function(err, status) {
 		deferred.reject(err)
 	})
@@ -45,12 +49,21 @@ function showResult(src, dst) {
 	console.log('----------------------------------');
 }
 
-if (process.argv.length == 3) {
-	srcString = process.argv[process.argv.length - 1]
+if (process.argv.length >= 3) {
+	srcString = process.argv[2]	
+	if (process.argv.length == 4) {
+		dstLan = process.argv[3]
+	}
 	PostCode(srcString).then (
 		function(dstString) {
 			dstString = toSBC(dstString)
 			showResult(srcString, dstString)
 		}
+		, function () {
+			console.log('invalid dst language: '+dstLan)
+		}
 	)
+}
+else {
+	console.log('usage: ./cn2tw.js dest_string [dest_language: en/cht/...]')
 }
