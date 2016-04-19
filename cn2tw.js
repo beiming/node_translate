@@ -3,7 +3,7 @@
 var request = require('request');
 var Q   = require('q');
 var srcLan = 'zh';
-var dstLan = 'en';
+var dstLan = 'cht';
 
 function PostCode(srcString) {
 	var deferred = Q.defer();
