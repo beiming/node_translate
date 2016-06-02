@@ -23,9 +23,10 @@ function getExplain(srcString) {
 		}
 	}, function(err, httpResponse, body) {
 		response = JSON.parse(body);
-		if (err || response.status != 0)
+		if (err || response.status != 0) {
+			console.log(err || response.msg)
 			deferred.reject(err || response.status);
-
+		}
 		else if (response.hasOwnProperty('data'))
 			deferred.resolve(['data', response.data[0]]);
 		else
@@ -78,8 +79,13 @@ function sayWords(srcString) {
 
 function run() {
 	if (process.argv.length >= 3) {
-		srcString = process.argv[2];
-		doTranslate(srcString);
+		srcString = process.argv[2].trim();
+		if(srcString.length <= 100){
+			doTranslate(srcString);
+		}
+		else {
+			console.log('string is too long');	
+		}
 	} else {
 		console.log('usage: ./cn2tw.js dest_string');
 	}

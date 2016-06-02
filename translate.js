@@ -10,18 +10,19 @@ function detectLanguage(srcString) {
 	var onSuccess = function(err, httpResponse, body) {
 		response = JSON.parse(body);
 		if (err || response.error != 0) {
-			return deferred.reject(error || response.error);
+			console.log(err || response.msg)
+			deferred.reject();
 		}
-		return deferred.resolve(response.lan);
+		deferred.resolve(response.lan);
 	}
 	var onError = function(err, status) {
-		return deferred.reject(err);
+		deferred.reject(err);
 	}
 
 	request.post({
 			url: 'http://fanyi.baidu.com/langdetect',
 			form: {
-				query: srcString
+				query: srcString.slice(0, 200)
 			}
 		},
 		onSuccess,
@@ -43,9 +44,10 @@ function translate(srcString) {
 		}
 	}, function(err, httpResponse, body) {
 		response = JSON.parse(body);
-		if (err || response.error)
+		if (err || response.error) {
+			console.log(response);
 			deferred.reject(err || response.error);
-
+        }
 		else
 			deferred.resolve(response.trans_result.data[0].dst);
 	}, function(err, status) {
@@ -88,9 +90,9 @@ function doTranslate() {
 
 function run() {
 	if (process.argv.length >= 3) {
-		srcString = process.argv[2]
+		srcString = process.argv[2].trim()
 		if (process.argv.length == 4) {
-			dstLan = process.argv[3];
+			dstLan = process.argv[3].trim();
 		}
 		detectLanguage(srcString).then(
 			function(language) {
