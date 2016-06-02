@@ -1,6 +1,6 @@
 use fanyi.baidu.com api
 
-➜  node git:(master) ✗ ./cn2tw.js 中国
+➜  node git:(master) ✗ ./translate.js 中国
 ----------------------------------
 中国
 --->

@@ -4,6 +4,7 @@
     "request": "^2.71.0"
   },
   "dependencies": {
+    "lodash": "^4.13.1",
     "q": "^1.4.1",
     "request": "^2.72.0"
   }
