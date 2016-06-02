@@ -5,7 +5,33 @@ var Q   = require('q');
 var srcLan = 'zh';
 var dstLan = 'cht';
 
-function PostCode(srcString) {
+function detectLanguage(srcString) {
+	var deferred = Q.defer();
+	var onSuccess = function(err, httpResponse, body){
+		response = JSON.parse(body);
+		if(err || response.error != 0)
+		{
+			return deferred.reject(error || response.error)
+		}
+		return deferred.resolve(response.lan)
+	}
+	var onError = function(err, status){
+		return deferred.reject(err)
+	}
+
+	request.post({
+		url: 'http://fanyi.baidu.com/langdetect',
+		form : {
+			query: srcString
+		}
+	},
+	onSuccess,
+	onError
+	)
+	return deferred.promise
+}
+
+function translate(srcString) {
 	var deferred = Q.defer();
 	request.post({
 		url: 'http://fanyi.baidu.com/v2transapi',
@@ -18,8 +44,8 @@ function PostCode(srcString) {
 		}
 	}, function(err, httpResponse, body) {
 		response = JSON.parse(body);
-		if (response.error)
-			deferred.reject(err)
+		if (err || response.error)
+			deferred.reject(err || response.error)
 
 		else
 			deferred.resolve(response.trans_result.data[0].dst);
@@ -49,21 +75,32 @@ function showResult(src, dst) {
 	console.log('----------------------------------');
 }
 
-if (process.argv.length >= 3) {
-	srcString = process.argv[2]	
-	if (process.argv.length == 4) {
-		dstLan = process.argv[3]
-	}
-	PostCode(srcString).then (
+function doTranslate() {
+	translate(srcString).then (
 		function(dstString) {
 			dstString = toSBC(dstString)
 			showResult(srcString, dstString)
 		}
 		, function () {
-			console.log('invalid dst language: '+dstLan)
+			console.log('invalid dst language: ' + dstLan)
 		}
-	)
+	);
+}
+
+if (process.argv.length >= 3) {
+	srcString = process.argv[2]	
+	if (process.argv.length == 4) {
+		dstLan = process.argv[3];
+	}
+	detectLanguage(srcString).then(
+		function(language){ 
+			srcLan = language;
+			doTranslate();
+		},
+		doTranslate
+	);	
+	
 }
 else {
-	console.log('usage: ./cn2tw.js dest_string [dest_language: en/cht/...]')
+	console.log('usage: ./cn2tw.js src_string [dest_language: en/cht/...]');
 }
