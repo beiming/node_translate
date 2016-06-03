@@ -10,7 +10,7 @@ function detectLanguage(srcString) {
 	var onSuccess = function(err, httpResponse, body) {
 		response = JSON.parse(body);
 		if (err || response.error != 0) {
-			console.log(err || response.msg)
+			console.error(err || response.msg)
 			deferred.reject();
 		}
 		deferred.resolve(response.lan);
@@ -45,7 +45,7 @@ function translate(srcString) {
 	}, function(err, httpResponse, body) {
 		response = JSON.parse(body);
 		if (err || response.error) {
-			console.log(response);
+			console.error(response);
 			deferred.reject(err || response.error);
         }
 		else
@@ -83,7 +83,7 @@ function doTranslate() {
 			showResult(srcString, dstString);
 		},
 		function() {
-			console.log('invalid dst language: ' + dstLan);
+			console.error('invalid dst language: ' + dstLan);
 		}
 	);
 }
