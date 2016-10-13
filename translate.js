@@ -4,7 +4,7 @@ var request = require('request');
 var Q = require('q');
 var srcLan = 'zh';
 var dstLan = 'cht';
-var proc = require('child_process').spawn('pbcopy');
+var ncp = require("copy-paste");
 
 function detectLanguage(srcString) {
 	var deferred = Q.defer();
@@ -76,8 +76,7 @@ function showResult(src, dst) {
 	console.log(dst);
 	console.log('----------------------------------');
 
-	proc.stdin.write(dst);
-	proc.stdin.end();
+	ncp.copy(dst);
 }
 
 function doTranslate() {
